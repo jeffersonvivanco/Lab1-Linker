@@ -1,6 +1,8 @@
 package linker;
 
 
+
+
 import java.io.*;
 import java.util.ArrayList;
 
@@ -25,6 +27,7 @@ public class linker {
         int numOfModules = 0;//once for getting symbol and the next to get the absolute addresses of words
         int length = 0; //Keeps track of the place the words are at
         SymbolTable symbolTable = new SymbolTable();//Creating symbol table
+        ModuleList modules = new ModuleList();//Creating a list to store modules
         for(int i=0; i<2; i++){
             if(i==0){
                 for(int x=0; x<lines.size(); x++){
@@ -64,10 +67,35 @@ public class linker {
             }
             //Second pass, getting absolute addresses of words
             if(i==1){
+                ArrayList<Variable> listUsed = new ArrayList<>();
+                for(int j=1; j<lines.size(); j++){
+                    if(j%3 == 2){
+                        int usedSyms = Integer.parseInt(lines.get(j).charAt(0)+"");
+                        if(usedSyms > 0){
+                            String[] symbols = lines.get(j).substring(1).split(" ");
+                            for(int k=0; k<symbols.length; k++){
+                                Variable sym  = symbolTable.findVariable(symbols[k]);
+                                listUsed.add(sym);
+                            }
+                        }
+                    }
+                    if(j%3 ==0){
+                        int numWords = Integer.parseInt(lines.get(j).charAt(0)+"");
+                        length = length+numWords;
+                        String[] words = null;
+                        if(numWords>0){
+                            words = lines.get(j).substring(1).split(" ");
+                        }
+                        Module module = new Module(listUsed,words,length);
+                        modules.addModule(module);
+                    }
 
+                }
             }
+            length = 0;
         }
         System.out.println(symbolTable.toString());
+        System.out.println(modules.toString());
 
 
     }

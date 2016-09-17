@@ -17,7 +17,15 @@ public class SymbolTable {
     public int sizeOfTable(){
         return variables.size();
     }
-
+    public Variable findVariable(String name){
+        Variable v = null;
+        for(int j=0; j<variables.size(); j++){
+            if(variables.get(j).getName().equals(name)){
+                v = variables.get(j);
+            }
+        }
+        return v;
+    }
     @Override
     public String toString(){
         String string = "Symbol Table\n\n";
