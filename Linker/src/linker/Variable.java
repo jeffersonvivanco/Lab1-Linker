@@ -20,7 +20,7 @@ public class Variable {
     }
     @Override
     public String toString(){
-        return this.name + " = " + this.value; 
+        return this.name + " = " + this.value;
     }
 
 }
