@@ -1,5 +1,7 @@
 package linker;
 
+
+
 import java.io.*;
 import java.util.ArrayList;
 
@@ -57,15 +59,9 @@ public class linker {
                         }
                         //Getting the length from the line where words are defined, to help us compute value of symbol
                         if(x%3==0){
-                            int numWords = Integer.parseInt(lines.get(x).charAt(0)+"");
-
-                            length = length+numWords;
-                            if(x<=3)
-                                length = 0;
                             Module module = new Module(length);
-
-
                             modules.addModule(module);
+                            length = Integer.parseInt(lines.get(x).charAt(0)+"") + length;
                         }
                     }
                 }
@@ -78,18 +74,19 @@ public class linker {
                     if(j%3 == 2){
                         int usedSyms = Integer.parseInt(lines.get(j).charAt(0)+"");
                         if(usedSyms > 0){
-                            String[] symbols = lines.get(j).substring(1).split(" ");
+                            String[] symbols = lines.get(j).split(" ");
+                            listUsed = new ArrayList<>();
                             for(int k=1; k<symbols.length; k++){
                                 Variable sym  = symbolTable.findVariable(symbols[k]);
-                                listUsed = new ArrayList<>();
+
                                 listUsed.add(sym);
                             }
                         }
                     }
                     if(j%3 ==0){
                         int numWords = Integer.parseInt(lines.get(j).charAt(0)+"");
-                        if(j>3)
-                            length = length+numWords;
+
+
                         String[] words = null;
                         if(numWords>0){
                             words = lines.get(j).substring(1).split(" ");
@@ -97,7 +94,7 @@ public class linker {
                         Module temp = modules.findModule(length);
                         temp.setListUsed(listUsed);
                         temp.setWords(words);
-                        listUsed = null;
+                        length = length+numWords;
 
                     }
 
