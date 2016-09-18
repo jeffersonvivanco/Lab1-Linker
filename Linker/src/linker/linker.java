@@ -1,8 +1,5 @@
 package linker;
 
-
-
-
 import java.io.*;
 import java.util.ArrayList;
 
@@ -60,34 +57,48 @@ public class linker {
                         }
                         //Getting the length from the line where words are defined, to help us compute value of symbol
                         if(x%3==0){
-                            length = length + Integer.parseInt(lines.get(x).charAt(0)+"");
+                            int numWords = Integer.parseInt(lines.get(x).charAt(0)+"");
+
+                            length = length+numWords;
+                            if(x<=3)
+                                length = 0;
+                            Module module = new Module(length);
+
+
+                            modules.addModule(module);
                         }
                     }
                 }
             }
             //Second pass, getting absolute addresses of words
             if(i==1){
-                ArrayList<Variable> listUsed = new ArrayList<>();
+                ArrayList<Variable> listUsed = null;
                 for(int j=1; j<lines.size(); j++){
+
                     if(j%3 == 2){
                         int usedSyms = Integer.parseInt(lines.get(j).charAt(0)+"");
                         if(usedSyms > 0){
                             String[] symbols = lines.get(j).substring(1).split(" ");
-                            for(int k=0; k<symbols.length; k++){
+                            for(int k=1; k<symbols.length; k++){
                                 Variable sym  = symbolTable.findVariable(symbols[k]);
+                                listUsed = new ArrayList<>();
                                 listUsed.add(sym);
                             }
                         }
                     }
                     if(j%3 ==0){
                         int numWords = Integer.parseInt(lines.get(j).charAt(0)+"");
-                        length = length+numWords;
+                        if(j>3)
+                            length = length+numWords;
                         String[] words = null;
                         if(numWords>0){
                             words = lines.get(j).substring(1).split(" ");
                         }
-                        Module module = new Module(listUsed,words,length);
-                        modules.addModule(module);
+                        Module temp = modules.findModule(length);
+                        temp.setListUsed(listUsed);
+                        temp.setWords(words);
+                        listUsed = null;
+
                     }
 
                 }

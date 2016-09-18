@@ -17,6 +17,16 @@ public class ModuleList {
     public void addModule(Module m){
         modules.add(m);
     }
+    public Module findModule(int baseAddress){
+        Module m = null;
+        for(int x=0; x<modules.size(); x++){
+            if(modules.get(x).getBaseAddress() == baseAddress){
+                m = modules.get(x);
+            }
+        }
+        return m;
+    }
+
     @Override
     public String toString(){
         String string = "Modules\n";

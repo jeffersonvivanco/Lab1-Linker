@@ -10,21 +10,29 @@ public class Module {
 
     private ArrayList<Variable> listUsed;
     private String[] words;
-    private int length;
+    private int baseAddress;
 
-    public Module(ArrayList<Variable> listUsed, String[] words, int length){
-        this.listUsed = listUsed;
+    public Module(int baseAddress){
+        this.baseAddress = baseAddress;
+    }
+    public void setListUsed(ArrayList<Variable>listUsed){
+        this.listUsed  = listUsed;
+    }
+    public int getBaseAddress(){
+        return this.baseAddress;
+    }
+    public void setWords(String[] words){
         this.words = words;
-        this.length = length;
     }
     @Override
     public String toString(){
         String string = "Words\n";
-        for(int c=0; c<words.length; c++){
-            string = string+words[c]+" ";
-        }
+//        for(int c=0; c<words.length; c++){
+//            string = string+words[c]+" ";
+//        }
         return string;
     }
+
 
 
 }
