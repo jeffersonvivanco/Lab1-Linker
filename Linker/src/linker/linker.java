@@ -13,7 +13,7 @@ public class linker {
     public static void main(String[] args) throws IOException{
 
         //Reading the file line by line and storing each line in an array
-        FileInputStream finput = new FileInputStream("/Users/jeffersonvivanco/Desktop/OSCS202/input1.txt");
+        FileInputStream finput = new FileInputStream("/Users/jeffersonvivanco/Desktop/OSCS202/Lab1Linker-Files/input1.txt");
         BufferedReader br  = new BufferedReader(new InputStreamReader(finput));
         String line = null;
         ArrayList<String> lines = new ArrayList<>();
