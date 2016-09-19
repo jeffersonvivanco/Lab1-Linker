@@ -14,7 +14,7 @@ public class linker {
     public static void main(String[] args)throws IOException{
 
         //Reading the file line by line and storing each line in an array
-        FileInputStream finput = new FileInputStream("/Users/jeffersonvivanco/Desktop/OSCS202/Lab1Linker-Files/input1.txt");
+        FileInputStream finput = new FileInputStream("/Users/jeffersonvivanco/Desktop/OSCS202/Lab1Linker-Files/input3.txt");
         BufferedReader br  = new BufferedReader(new InputStreamReader(finput));
 
         ArrayList<String> lines  = new ArrayList<String>(); //The second need the input, we just read off this array
@@ -236,7 +236,7 @@ public class linker {
         }
 
 
-        System.out.println(symbolTable.toString());
+        System.out.print(symbolTable.toString());
         System.out.println(modules);
 
     }

@@ -53,9 +53,11 @@ public class Module {
     }
     @Override
     public String toString(){
-        String string = "Words\n";
+        String string = "";
+        int tempBase = this.baseAddress;
         for(int c=0; c<words.length; c++){
-            string = string+words[c]+" ";
+            string = string+tempBase+" "+words[c]+"\n";
+            tempBase++;
         }
         return string;
     }

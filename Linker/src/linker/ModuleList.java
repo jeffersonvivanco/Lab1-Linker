@@ -29,9 +29,9 @@ public class ModuleList {
 
     @Override
     public String toString(){
-        String string = "Modules\n";
+        String string = "Memory Map\n";
         for(int v=0; v<modules.size();v++){
-            string = string + modules.get(v).toString() + "\n";
+            string = string + modules.get(v).toString();
         }
         return string;
     }
