@@ -12,8 +12,9 @@ public class Module {
     private String[] words = {};
     private int baseAddress = 0;
 
-    public Module(int baseAddress){
+    public Module(int baseAddress, String[] words){
         this.baseAddress = baseAddress;
+        this.words = words;
     }
     public void setListUsed(ArrayList<Variable>listUsed){
         this.listUsed  = listUsed;
@@ -21,7 +22,8 @@ public class Module {
     public int getBaseAddress(){
         return this.baseAddress;
     }
-    public void setWords(String[] words){
+
+    public void computeAddresses(){
         for(int i=0; i<words.length; i++){
             if(words[i].endsWith("1") || words[i].endsWith("2"))
                 words[i] = words[i].substring(0,4);

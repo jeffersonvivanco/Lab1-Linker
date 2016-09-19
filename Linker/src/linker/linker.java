@@ -10,109 +10,15 @@ import java.util.ArrayList;
  */
 public class linker {
 
-//    public static void main(String[] args) throws IOException{
-//
-//        //Reading the file line by line and storing each line in an array
-//        FileInputStream finput = new FileInputStream("/Users/jeffersonvivanco/Desktop/OSCS202/Lab1Linker-Files/input1.txt");
-//        BufferedReader br  = new BufferedReader(new InputStreamReader(finput));
-//        String line = null;
-//        ArrayList<String> lines = new ArrayList<>();
-//        while((line = br.readLine())!=null){
-//            lines.add(line);
-//        }
-//
-//        //Getting symbol table and parsing each line to get final output, going through array of lines twice
-//
-//        int numOfModules = 0;//once for getting symbol and the next to get the absolute addresses of words
-//        int length = 0; //Keeps track of the place the words are at
-//        SymbolTable symbolTable = new SymbolTable();//Creating symbol table
-//        ModuleList modules = new ModuleList();//Creating a list to store modules
-//        for(int i=0; i<2; i++){
-//            if(i==0){
-//                for(int x=0; x<lines.size(); x++){
-//                    //First pass, getting symbol table
-//                    if(x==0){
-//                        numOfModules = Integer.parseInt(lines.get(x));//Recording 1st line of file for num of modules
-//                    }
-//                    if(x>0){
-//                        //Getting definitions
-//                        if(x%3==1){
-//                            int numOfSymbols = Integer.parseInt(lines.get(x).charAt(0)+"");
-//                            //if there are symbols defined
-//                            if(numOfSymbols > 0){
-//                                //parsing the string to get symbols and their definitions
-//                                String[] lineEles = lines.get(x).split(" ");
-//                                String varName = "";
-//                                int varValue = 0;
-//                                for(int l=1; l<lineEles.length; l++){
-//                                    if(l%2==1){
-//
-//                                        varName = lineEles[l];
-//                                    }
-//                                    if(l%2==0){
-//                                        varValue = Integer.parseInt(lineEles[l]) + length;
-//                                    }
-//                                }
-//                                Variable v = new Variable(varName,varValue);
-//                                symbolTable.addVariable(v);
-//                            }
-//                        }
-//                        //Getting the length from the line where words are defined, to help us compute value of symbol
-//                        if(x%3==0){
-//                            Module module = new Module(length);
-//                            modules.addModule(module);
-//                            length = Integer.parseInt(lines.get(x).charAt(0)+"") + length;
-//                        }
-//                    }
-//                }
-//            }
-//            //Second pass, getting absolute addresses of words
-//            if(i==1){
-//                ArrayList<Variable> listUsed = null;
-//                for(int j=1; j<lines.size(); j++){
-//
-//                    if(j%3 == 2){
-//                        int usedSyms = Integer.parseInt(lines.get(j).charAt(0)+"");
-//                        if(usedSyms > 0){
-//                            String[] symbols = lines.get(j).split(" ");
-//                            listUsed = new ArrayList<>();
-//                            for(int k=1; k<symbols.length; k++){
-//                                Variable sym  = symbolTable.findVariable(symbols[k]);
-//
-//                                listUsed.add(sym);
-//                            }
-//                        }
-//                    }
-//                    if(j%3 ==0){
-//                        int numWords = Integer.parseInt(lines.get(j).charAt(0)+"");
-//
-//
-//                        String[] words = null;
-//                        if(numWords>0){
-//                            words = lines.get(j).substring(1).split(" ");
-//                        }
-//                        Module temp = modules.findModule(length);
-//                        temp.setListUsed(listUsed);
-//                        temp.setWords(words);
-//                        length = length+numWords;
-//
-//                    }
-//
-//                }
-//            }
-//            length = 0;
-//        }
-//        System.out.println(symbolTable.toString());
-//        System.out.println(modules.toString());
-//
-//
-//    }
 
     public static void main(String[] args)throws IOException{
 
         //Reading the file line by line and storing each line in an array
         FileInputStream finput = new FileInputStream("/Users/jeffersonvivanco/Desktop/OSCS202/Lab1Linker-Files/input1.txt");
         BufferedReader br  = new BufferedReader(new InputStreamReader(finput));
+
+        ArrayList<String> lines  = new ArrayList<String>(); //The second need the input, we just read off this array
+
 
         String line = null;//Where the line from the reader will be stored
         String[] arrayS;//Used to store the line as an array, helps with parsing
@@ -121,6 +27,7 @@ public class linker {
         int index = 0;//We use this to control when a new line of a module is starting, for example when a new def list or use list starts
 
         int numOfModules = 0;//Here we store the first number from each file which represents the number of modules
+
         //These booleans are used to notify the program when to start making a def list, use list etc.
         boolean isNumOfModules = true;
         Boolean def = false;
@@ -129,101 +36,208 @@ public class linker {
 
         int numOfElements = 0;//Keeps track of the number of elements in each list
 
-        SymbolTable symbolTable = new SymbolTable();
+        String[] programText = null;
 
-        //Reading each line from the file
-        while((line = br.readLine())!=null){
+        SymbolTable symbolTable = new SymbolTable();//Created symbol table
 
+        ModuleList modules = new ModuleList();
 
-            arrayS = line.split(" ");
+        int baseAddress = 0; // Keeps track of base address of each module
 
-            for(int j=0; j<arrayS.length; j++){
-                if(arrayS[j].matches("[0-9]+") || arrayS[j].matches("[a-zA-Z]+")||arrayS[j].length()>1){
+        for(int w=0; w<2; w++){
+            if(w==0){//1st pass
+                //Reading each line from the file
 
-                    if(isNumOfModules){//Get num of modules
-                        numOfModules = Integer.parseInt(arrayS[j]);
-                        System.out.println(numOfModules);
-                        isNumOfModules = false;
-                        def = true;
-                        index = 1;
-                    }
-                    else if(def){//Get definition line
-                        if(index == 1){
-                            numOfElements = Integer.parseInt(arrayS[j]);
-                            index = 0;
-                        }
-                        potentialLine = potentialLine + arrayS[j]+" ";
-                        int length = potentialLine.split(" ").length;
-                        if(length == numOfElements*2+1){
-                            System.out.println(potentialLine);
-                            String[] s = potentialLine.split(" ");
-                            String name="";
-                            boolean checkName = false;
-                            boolean checkValue = false;
-                            int value=0;
-                            for(int q=1; q<s.length; q++){
-                                if(q%2 == 1){
-                                    name = s[q];
-                                    checkName = true;
+                while((line = br.readLine())!=null){
+                    lines.add(line);
+                    arrayS = line.split(" ");
+
+                    for(int j=0; j<arrayS.length; j++){
+                        if(arrayS[j].matches("[0-9]+") || arrayS[j].matches("[a-zA-Z]+")||arrayS[j].length()>1){
+
+                            if(isNumOfModules){//Get num of modules
+                                numOfModules = Integer.parseInt(arrayS[j]);
+//                                System.out.println(numOfModules);
+                                isNumOfModules = false;
+                                def = true;
+                                index = 1;
+                            }
+                            else if(def){//Get definition line
+                                if(index == 1){
+                                    numOfElements = Integer.parseInt(arrayS[j]);
+                                    index = 0;
                                 }
-                                if(q%2==0){
-                                    value = Integer.parseInt(s[q]);
-                                    checkValue = true;
-                                }
-                                if(checkName && checkValue){
-                                    Variable v = new Variable(name, value);
-                                    symbolTable.addVariable(v);
-                                    checkName = false;
-                                    checkValue = false;
+                                potentialLine = potentialLine + arrayS[j]+" ";
+                                int length = potentialLine.split(" ").length;
+                                if(length == numOfElements*2+1){
+//                                    System.out.println(potentialLine);
+                                    String[] s = potentialLine.split(" ");
+                                    String name="";
+                                    boolean checkName = false;
+                                    boolean checkValue = false;
+                                    int value=0;
+                                    for(int q=1; q<s.length; q++){
+                                        if(q%2 == 1){
+                                            name = s[q];
+                                            checkName = true;
+                                        }
+                                        if(q%2==0){
+                                            value = Integer.parseInt(s[q])+baseAddress;
+                                            checkValue = true;
+                                        }
+                                        if(checkName && checkValue){
+                                            Variable v = new Variable(name, value);
+                                            symbolTable.addVariable(v);
+                                            checkName = false;
+                                            checkValue = false;
+                                        }
+                                    }
+
+                                    def = false;
+                                    used = true;
+                                    index = 1;
+                                    potentialLine = "";
                                 }
                             }
-
-                            def = false;
-                            used = true;
-                            index = 1;
-                            potentialLine = "";
+                            else if(used){//Get used list
+                                if(index == 1){
+                                    numOfElements = Integer.parseInt(arrayS[j]);
+                                    index = 0;
+                                }
+                                potentialLine = potentialLine + arrayS[j]+" ";
+                                int length  = potentialLine.split(" ").length;
+                                if(length == numOfElements+1){
+//                                    System.out.println(potentialLine);
+                                    used = false;
+                                    words = true;
+                                    index = 1;
+                                    potentialLine = "";
+                                }
+                            }
+                            else if(words){//Get program text
+                                if(index == 1){
+                                    numOfElements = Integer.parseInt(arrayS[j]);
+                                    index = 0;
+                                }
+                                potentialLine = potentialLine + arrayS[j]+" ";
+                                int length = potentialLine.split(" ").length;
+                                if(length==numOfElements+1){
+//                                    System.out.println(potentialLine);
+                                    programText = potentialLine.substring(1).split(" ");
+                                    words = false;
+                                    def = true;
+                                    index = 1;
+                                    potentialLine = "";
+                                    Module m = new Module(baseAddress, programText);
+                                    modules.addModule(m);
+                                    baseAddress = baseAddress + numOfElements;
+                                    programText = null;
+                                }
+                            }
+                            else{
+                                //Do nothing
+                            }
                         }
-                    }
-                    else if(used){//Get used list
-                        if(index == 1){
-                            numOfElements = Integer.parseInt(arrayS[j]);
-                            index = 0;
+                        else{
+                            //do nothing
                         }
-                        potentialLine = potentialLine + arrayS[j]+" ";
-                        int length  = potentialLine.split(" ").length;
-                        if(length == numOfElements+1){
-                            System.out.println(potentialLine);
-                            used = false;
-                            words = true;
-                            index = 1;
-                            potentialLine = "";
-                        }
-                    }
-                    else if(words){//Get program text
-                        if(index == 1){
-                            numOfElements = Integer.parseInt(arrayS[j]);
-                            index = 0;
-                        }
-                        potentialLine = potentialLine + arrayS[j]+" ";
-                        int length = potentialLine.split(" ").length;
-                        if(length==numOfElements+1){
-                            System.out.println(potentialLine);
-                            words = false;
-                            def = true;
-                            index = 1;
-                            potentialLine = "";
-                        }
-                    }
-                    else{
-                        //Do nothing
                     }
                 }
-                else{
-                    //do nothing
+                isNumOfModules = true;
+                def = false;
+                used = false;
+                words = false;
+                baseAddress = 0;
+                numOfElements = 0;
+            }
+            if(w == 1){//Second pass
+                //Reading each line from the file
+                int place = 0;
+                while(place<lines.size()){
+                    line = lines.get(place);
+//                    System.out.println("It goes in here");
+                    arrayS = line.split(" ");
+
+                    for(int j=0; j<arrayS.length; j++){
+                        if(arrayS[j].matches("[0-9]+") || arrayS[j].matches("[a-zA-Z]+")||arrayS[j].length()>1){
+
+                            if(isNumOfModules){//Get num of modules
+                                numOfModules = Integer.parseInt(arrayS[j]);
+
+                                isNumOfModules = false;
+                                def = true;
+                                index = 1;
+                            }
+                            else if(def){//Get definition line
+                                if(index == 1){
+                                    numOfElements = Integer.parseInt(arrayS[j]);
+                                    index = 0;
+                                }
+                                potentialLine = potentialLine + arrayS[j]+" ";
+                                int length = potentialLine.split(" ").length;
+                                if(length == numOfElements*2+1){
+//                                    System.out.println(potentialLine);
+                                    def = false;
+                                    used = true;
+                                    index = 1;
+                                    potentialLine = "";
+                                }
+                            }
+                            else if(used){//Get used list
+                                if(index == 1){
+                                    numOfElements = Integer.parseInt(arrayS[j]);
+                                    index = 0;
+                                }
+                                potentialLine = potentialLine + arrayS[j]+" ";
+                                int length  = potentialLine.split(" ").length;
+                                if(length == numOfElements+1){
+//                                    System.out.println(potentialLine);
+                                    Module temp = modules.findModule(baseAddress);
+                                    ArrayList<Variable> variablesUsed = new ArrayList<>();
+                                    String[] potentialStrArray = potentialLine.split(" ");
+                                    for(int s=1; s<potentialStrArray.length; s++){
+                                        Variable v = symbolTable.findVariable(potentialStrArray[s]);
+                                        variablesUsed.add(v);
+                                    }
+                                    temp.setListUsed(variablesUsed);
+                                    temp.computeAddresses();
+                                    used = false;
+                                    words = true;
+                                    index = 1;
+                                    potentialLine = "";
+                                }
+                            }
+                            else if(words){//Get program text
+                                if(index == 1){
+                                    numOfElements = Integer.parseInt(arrayS[j]);
+                                    index = 0;
+                                }
+                                potentialLine = potentialLine + arrayS[j]+" ";
+                                int length = potentialLine.split(" ").length;
+                                if(length==numOfElements+1){
+                                    words = false;
+                                    def = true;
+                                    index = 1;
+                                    potentialLine = "";
+                                    baseAddress = baseAddress + numOfElements;
+                                }
+                            }
+                            else{
+                                //Do nothing
+                            }
+                        }
+                        else{
+                            //do nothing
+                        }
+                    }
+                    place++;
                 }
             }
         }
+
+
         System.out.println(symbolTable.toString());
+        System.out.println(modules);
 
     }
 
