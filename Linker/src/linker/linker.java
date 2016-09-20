@@ -23,7 +23,7 @@ public class linker {
         FileInputStream finput = null;
         BufferedReader br = null;
         try {
-            finput = new FileInputStream("jkdfb");
+            finput = new FileInputStream(args[0]);
             br  = new BufferedReader(new InputStreamReader(finput));
         }catch (Exception e){
             System.err.println("File could not be read or could not be found. Please make sure"+
