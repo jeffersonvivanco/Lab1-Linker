@@ -6,10 +6,12 @@ package linker;
 public class Variable {
     private String name;
     private int value;
+    private int modNum;
 
-    public Variable(String name, int value){
+    public Variable(String name, int value, int modNum){
         this.name = name;
         this.value = value;
+        this.modNum = modNum;
 
     }
     public String getName(){
@@ -17,6 +19,9 @@ public class Variable {
     }
     public int getValue(){
         return this.value;
+    }
+    public int getModNum(){
+        return this.modNum;
     }
     @Override
     public String toString(){

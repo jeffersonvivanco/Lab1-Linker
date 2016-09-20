@@ -26,6 +26,17 @@ public class SymbolTable {
         }
         return v;
     }
+    public int checkIfExists(String vName){
+        int check = -1;
+        for(int h=0; h<variables.size(); h++){
+            if(variables.get(h).getName().equals(vName))
+                check = 1;
+        }
+        return check;
+    }
+    public Variable getVariable(int x){
+        return variables.get(x);
+    }
     @Override
     public String toString(){
         String string = "Symbol Table\n\n";

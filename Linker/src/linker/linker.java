@@ -38,12 +38,15 @@ public class linker {
 
         String[] programText = null;
 
+        ArrayList<String> warsAndErrs = new ArrayList<>();
+
         SymbolTable symbolTable = new SymbolTable();//Created symbol table
 
         ModuleList modules = new ModuleList();
 
         int baseAddress = 0; // Keeps track of base address of each module
 
+        int modNum = 0; //Keeps track of which module is at
         for(int w=0; w<2; w++){
             if(w==0){//1st pass
                 //Reading each line from the file
@@ -86,8 +89,13 @@ public class linker {
                                             checkValue = true;
                                         }
                                         if(checkName && checkValue){
-                                            Variable v = new Variable(name, value);
-                                            symbolTable.addVariable(v);
+                                            if(symbolTable.checkIfExists(name) == -1){
+                                                Variable v = new Variable(name, value, modNum);
+                                                symbolTable.addVariable(v);
+                                            }
+                                            else{
+                                                warsAndErrs.add("Error: This variable "+ name+" is multiply defined; first value used.");
+                                            }
                                             checkName = false;
                                             checkValue = false;
                                         }
@@ -123,15 +131,21 @@ public class linker {
                                 int length = potentialLine.split(" ").length;
                                 if(length==numOfElements+1){
 //                                    System.out.println(potentialLine);
-                                    programText = potentialLine.substring(1).split(" ");
+                                    programText = potentialLine.split(" ");
+                                    int newLength = programText.length-1;
+                                    String[] newProgramText = new String[newLength];
+                                    for(int d=0; d<newLength; d++){
+                                        newProgramText[d] = programText[d+1];
+                                    }
                                     words = false;
                                     def = true;
                                     index = 1;
                                     potentialLine = "";
-                                    Module m = new Module(baseAddress, programText);
+                                    Module m = new Module(baseAddress, newProgramText, modNum);
                                     modules.addModule(m);
                                     baseAddress = baseAddress + numOfElements;
                                     programText = null;
+                                    modNum++;
                                 }
                             }
                             else{
@@ -152,6 +166,7 @@ public class linker {
             }
             if(w == 1){//Second pass
                 //Reading each line from the file
+                String symbolsDefined = "";
                 int place = 0;
                 while(place<lines.size()){
                     line = lines.get(place);
@@ -176,7 +191,15 @@ public class linker {
                                 potentialLine = potentialLine + arrayS[j]+" ";
                                 int length = potentialLine.split(" ").length;
                                 if(length == numOfElements*2+1){
+                                    Module g = modules.findModule(baseAddress);
+                                    String[] arrayOfPotentialL = potentialLine.split(" ");
+                                    for(int t=1; t<arrayOfPotentialL.length; t++){
+                                        symbolsDefined = symbolsDefined + arrayOfPotentialL[t]+" ";
+                                    }
 //                                    System.out.println(potentialLine);
+//                                    System.out.println(symbolsDefined);
+
+                                    symbolsDefined = "";
                                     def = false;
                                     used = true;
                                     index = 1;
@@ -197,6 +220,7 @@ public class linker {
                                     String[] potentialStrArray = potentialLine.split(" ");
                                     for(int s=1; s<potentialStrArray.length; s++){
                                         Variable v = symbolTable.findVariable(potentialStrArray[s]);
+                                        modules.addVarToListUsed(potentialStrArray[s]);
                                         variablesUsed.add(v);
                                     }
                                     temp.setListUsed(variablesUsed);
@@ -235,9 +259,13 @@ public class linker {
             }
         }
 
-
-        System.out.print(symbolTable.toString());
+        modules.setSymbolTable(symbolTable);
+        System.out.println(symbolTable.toString());
         System.out.println(modules);
+        modules.checkIfDefinedButNotUsed();
+//        for(int err=0; err<warsAndErrs.size(); err++){
+//            System.out.println(warsAndErrs.get(err));
+//        }
 
     }
 

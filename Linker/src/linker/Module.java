@@ -11,10 +11,13 @@ public class Module {
     private ArrayList<Variable> listUsed = new ArrayList<>();
     private String[] words = {};
     private int baseAddress = 0;
+    private String defLine = "";
+    private int modNum = 0;
 
-    public Module(int baseAddress, String[] words){
+    public Module(int baseAddress, String[] words, int modNum){
         this.baseAddress = baseAddress;
         this.words = words;
+        this.modNum = modNum;
     }
     public void setListUsed(ArrayList<Variable>listUsed){
         this.listUsed  = listUsed;
@@ -51,6 +54,18 @@ public class Module {
         }
         this.words = words;
     }
+    public void setDefLine(String l){
+        String[] array = l.split(" ");
+        String line = "";
+        for(int i=0; i<array.length; i++){
+            if(i%2 == 0)
+                line = line + array[i]+" ";
+        }
+        this.defLine = line;
+
+    }
+
+
     @Override
     public String toString(){
         String string = "";
@@ -59,6 +74,7 @@ public class Module {
             string = string+tempBase+" "+words[c]+"\n";
             tempBase++;
         }
+
         return string;
     }
 
