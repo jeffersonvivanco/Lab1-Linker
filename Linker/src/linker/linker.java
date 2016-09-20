@@ -13,9 +13,24 @@ public class linker {
 
     public static void main(String[] args)throws IOException{
 
+        if(args.length !=1){
+            System.err.println("Please include the absolute file path as the first and only command line "+
+            "argument to run this program. Please run it again. Thank You!");
+            System.exit(0);
+        }
+
         //Reading the file line by line and storing each line in an array
-        FileInputStream finput = new FileInputStream("/Users/jeffersonvivanco/Desktop/OSCS202/Lab1Linker-Files/input8.txt");
-        BufferedReader br  = new BufferedReader(new InputStreamReader(finput));
+        FileInputStream finput = null;
+        BufferedReader br = null;
+        try {
+            finput = new FileInputStream("jkdfb");
+            br  = new BufferedReader(new InputStreamReader(finput));
+        }catch (Exception e){
+            System.err.println("File could not be read or could not be found. Please make sure"+
+            " you entered the correct abs path name of your file. Please run again.");
+            System.exit(0);
+        }
+
 
         ArrayList<String> lines  = new ArrayList<String>(); //The second need the input, we just read off this array
 
