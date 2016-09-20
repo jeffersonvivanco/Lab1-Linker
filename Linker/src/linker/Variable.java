@@ -8,6 +8,7 @@ public class Variable {
     private int value = -111;
     private int modNum;
     private String multiplyDefined="";
+    private boolean isUsed = false;
 
     public Variable(String name, int value, int modNum){
         this.name = name;
@@ -15,8 +16,9 @@ public class Variable {
         this.modNum = modNum;
 
     }
-    public Variable(String name){
+    public Variable(String name, int modNum){
         this.name = name;
+        this.modNum = modNum;
     }
     public String getName(){
         return this.name;
@@ -29,6 +31,12 @@ public class Variable {
     }
     public void isMultiplyDefined(){
         multiplyDefined = "Error: This variable is multiply defined; first value used.";
+    }
+    public void varUsed(){
+        this.isUsed = true;
+    }
+    public boolean isVarUsed(){
+        return this.isUsed;
     }
     @Override
     public String toString(){

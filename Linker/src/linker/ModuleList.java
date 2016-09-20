@@ -55,6 +55,11 @@ public class ModuleList {
             check = false;
         }
     }
+    public void checkIfAppearsNotUsedInModule(){
+        for(int g=0; g<modules.size(); g++){
+            modules.get(g).checkIfVarUsed();
+        }
+    }
     @Override
     public String toString(){
         String string = "Memory Map\n";

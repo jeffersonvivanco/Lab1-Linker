@@ -14,7 +14,7 @@ public class linker {
     public static void main(String[] args)throws IOException{
 
         //Reading the file line by line and storing each line in an array
-        FileInputStream finput = new FileInputStream("/Users/jeffersonvivanco/Desktop/OSCS202/Lab1Linker-Files/input7.txt");
+        FileInputStream finput = new FileInputStream("/Users/jeffersonvivanco/Desktop/OSCS202/Lab1Linker-Files/input8.txt");
         BufferedReader br  = new BufferedReader(new InputStreamReader(finput));
 
         ArrayList<String> lines  = new ArrayList<String>(); //The second need the input, we just read off this array
@@ -163,6 +163,7 @@ public class linker {
                 words = false;
                 baseAddress = 0;
                 numOfElements = 0;
+                modNum = 0;
             }
             if(w == 1){//Second pass
                 //Reading each line from the file
@@ -224,7 +225,7 @@ public class linker {
                                         if(v!=null)
                                             variablesUsed.add(v);
                                         else{
-                                            v = new Variable(potentialStrArray[s]);
+                                            v = new Variable(potentialStrArray[s],modNum);
                                             variablesUsed.add(v);
                                         }
                                     }
@@ -249,6 +250,7 @@ public class linker {
                                     index = 1;
                                     potentialLine = "";
                                     baseAddress = baseAddress + numOfElements;
+                                    modNum++;
                                 }
                             }
                             else{
@@ -268,6 +270,7 @@ public class linker {
         System.out.println(symbolTable.toString());
         System.out.println(modules);
         modules.checkIfDefinedButNotUsed();
+        modules.checkIfAppearsNotUsedInModule();
 //        for(int err=0; err<warsAndErrs.size(); err++){
 //            System.out.println(warsAndErrs.get(err));
 //        }

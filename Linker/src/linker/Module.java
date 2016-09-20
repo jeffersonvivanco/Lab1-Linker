@@ -54,9 +54,11 @@ public class Module {
                     Variable v = listUsed.get(index);
                     int wordAsInt = Integer.parseInt(words[i].substring(0,4))-index;
                     if(v.getValue() == -111){
+                        v.varUsed();
                         words[i] = wordAsInt+" Error: "+v.getName()+" is not defined; zero used.";
                     }
                     else{
+                        v.varUsed();
                         wordAsInt = wordAsInt+v.getValue();
                         words[i] = wordAsInt+"";
                     }
@@ -69,6 +71,14 @@ public class Module {
 
         }
         this.words = words;
+    }
+    public void checkIfVarUsed(){
+        for(int x=0; x<listUsed.size(); x++){
+            if(!listUsed.get(x).isVarUsed()){
+                System.out.println("Warning: In module "+this.modNum+" "+listUsed.get(x).getName()+
+                " is on use list but isn't used.");
+            }
+        }
     }
     public void setDefLine(String l){
         String[] array = l.split(" ");
