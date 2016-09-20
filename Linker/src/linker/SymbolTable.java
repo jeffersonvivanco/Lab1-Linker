@@ -29,8 +29,11 @@ public class SymbolTable {
     public int checkIfExists(String vName){
         int check = -1;
         for(int h=0; h<variables.size(); h++){
-            if(variables.get(h).getName().equals(vName))
+            if(variables.get(h).getName().equals(vName)){
                 check = 1;
+                variables.get(h).isMultiplyDefined();
+            }
+
         }
         return check;
     }

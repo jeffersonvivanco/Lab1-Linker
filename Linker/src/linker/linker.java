@@ -14,7 +14,7 @@ public class linker {
     public static void main(String[] args)throws IOException{
 
         //Reading the file line by line and storing each line in an array
-        FileInputStream finput = new FileInputStream("/Users/jeffersonvivanco/Desktop/OSCS202/Lab1Linker-Files/input3.txt");
+        FileInputStream finput = new FileInputStream("/Users/jeffersonvivanco/Desktop/OSCS202/Lab1Linker-Files/input7.txt");
         BufferedReader br  = new BufferedReader(new InputStreamReader(finput));
 
         ArrayList<String> lines  = new ArrayList<String>(); //The second need the input, we just read off this array
@@ -34,6 +34,7 @@ public class linker {
         Boolean used = false;
         Boolean words = false;
 
+
         int numOfElements = 0;//Keeps track of the number of elements in each list
 
         String[] programText = null;
@@ -45,6 +46,8 @@ public class linker {
         ModuleList modules = new ModuleList();
 
         int baseAddress = 0; // Keeps track of base address of each module
+
+        int sizeOfMachine = 600;//Given value of machine in class instructions
 
         int modNum = 0; //Keeps track of which module is at
         for(int w=0; w<2; w++){
@@ -93,9 +96,6 @@ public class linker {
                                                 Variable v = new Variable(name, value, modNum);
                                                 symbolTable.addVariable(v);
                                             }
-                                            else{
-                                                warsAndErrs.add("Error: This variable "+ name+" is multiply defined; first value used.");
-                                            }
                                             checkName = false;
                                             checkValue = false;
                                         }
@@ -141,7 +141,7 @@ public class linker {
                                     def = true;
                                     index = 1;
                                     potentialLine = "";
-                                    Module m = new Module(baseAddress, newProgramText, modNum);
+                                    Module m = new Module(baseAddress, newProgramText, modNum, sizeOfMachine);
                                     modules.addModule(m);
                                     baseAddress = baseAddress + numOfElements;
                                     programText = null;
@@ -221,7 +221,12 @@ public class linker {
                                     for(int s=1; s<potentialStrArray.length; s++){
                                         Variable v = symbolTable.findVariable(potentialStrArray[s]);
                                         modules.addVarToListUsed(potentialStrArray[s]);
-                                        variablesUsed.add(v);
+                                        if(v!=null)
+                                            variablesUsed.add(v);
+                                        else{
+                                            v = new Variable(potentialStrArray[s]);
+                                            variablesUsed.add(v);
+                                        }
                                     }
                                     temp.setListUsed(variablesUsed);
                                     temp.computeAddresses();

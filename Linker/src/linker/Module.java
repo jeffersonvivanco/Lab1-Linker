@@ -13,11 +13,13 @@ public class Module {
     private int baseAddress = 0;
     private String defLine = "";
     private int modNum = 0;
+    private int sizeOfMachine;
 
-    public Module(int baseAddress, String[] words, int modNum){
+    public Module(int baseAddress, String[] words, int modNum, int sizeOfMachine){
         this.baseAddress = baseAddress;
         this.words = words;
         this.modNum = modNum;
+        this.sizeOfMachine = sizeOfMachine;
     }
     public void setListUsed(ArrayList<Variable>listUsed){
         this.listUsed  = listUsed;
@@ -28,8 +30,16 @@ public class Module {
 
     public void computeAddresses(){
         for(int i=0; i<words.length; i++){
-            if(words[i].endsWith("1") || words[i].endsWith("2"))
+            if(words[i].endsWith("1")){
                 words[i] = words[i].substring(0,4);
+            }
+            else if(words[i].endsWith("2")){
+                int value = Integer.parseInt(words[i].substring(1,4));
+                if(value < sizeOfMachine)
+                    words[i] = words[i].substring(0,4);
+                else
+                    words[i] = words[i].charAt(0)+"000 Error: Absolute address exceeds machine size; zero used.";
+            }
             else if(words[i].endsWith("3")){
                 int num = Integer.parseInt(words[i].substring(0,4));
                 num = num+baseAddress;
@@ -38,13 +48,19 @@ public class Module {
             else if(words[i].endsWith("4")){
                 int index = Integer.parseInt(words[i].substring(1,4));
                 if(index < 0 || index >= listUsed.size()){
-                    words[i] = words[i].substring(0,4);
+                    words[i] = words[i].substring(0,4) + " Error: External address exceeds length of use list; treated as immediate.";
                 }
                 else{
                     Variable v = listUsed.get(index);
                     int wordAsInt = Integer.parseInt(words[i].substring(0,4))-index;
-                    wordAsInt = wordAsInt+v.getValue();
-                    words[i] = wordAsInt+"";
+                    if(v.getValue() == -111){
+                        words[i] = wordAsInt+" Error: "+v.getName()+" is not defined; zero used.";
+                    }
+                    else{
+                        wordAsInt = wordAsInt+v.getValue();
+                        words[i] = wordAsInt+"";
+                    }
+
                 }
             }
             else{
@@ -71,7 +87,7 @@ public class Module {
         String string = "";
         int tempBase = this.baseAddress;
         for(int c=0; c<words.length; c++){
-            string = string+tempBase+" "+words[c]+"\n";
+            string = string+tempBase+": "+words[c]+"\n";
             tempBase++;
         }
 
