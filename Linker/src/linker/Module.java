@@ -14,12 +14,14 @@ public class Module {
     private String defLine = "";
     private int modNum = 0;
     private int sizeOfMachine;
+    private int sizeOfModule;
 
-    public Module(int baseAddress, String[] words, int modNum, int sizeOfMachine){
+    public Module(int baseAddress, String[] words, int modNum, int sizeOfMachine, int sizeOfModule){
         this.baseAddress = baseAddress;
         this.words = words;
         this.modNum = modNum;
         this.sizeOfMachine = sizeOfMachine;
+        this.sizeOfModule = sizeOfModule;
     }
     public void setListUsed(ArrayList<Variable>listUsed){
         this.listUsed  = listUsed;
@@ -42,8 +44,14 @@ public class Module {
             }
             else if(words[i].endsWith("3")){
                 int num = Integer.parseInt(words[i].substring(0,4));
-                num = num+baseAddress;
-                words[i] = num+"";
+                int num2 = Integer.parseInt(words[i].substring(1,4));
+                if(num2 > sizeOfModule){
+                    words[i] = words[i].charAt(0)+"000"+" Error: Relative address exceeds module size; zero used.";
+                }
+                else{
+                    num = num+baseAddress;
+                    words[i] = num+"";
+                }
             }
             else if(words[i].endsWith("4")){
                 int index = Integer.parseInt(words[i].substring(1,4));
@@ -90,8 +98,12 @@ public class Module {
         this.defLine = line;
 
     }
-
-
+    public int getModNum(){
+        return this.modNum;
+    }
+    public int getSizeOfModule(){
+        return this.sizeOfModule;
+    }
     @Override
     public String toString(){
         String string = "";

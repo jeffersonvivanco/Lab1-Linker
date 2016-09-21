@@ -3,6 +3,7 @@ package linker;
 
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -69,10 +70,11 @@ public class linker {
             if(w==0){//1st pass
                 //Reading each line from the file
 
+                ArrayList<Variable> variablesOfMod = new ArrayList<>();
                 while((line = br.readLine())!=null){
                     lines.add(line);
                     arrayS = line.split(" ");
-
+//                    ArrayList<Variable> variablesOfMod = new ArrayList<>();
                     for(int j=0; j<arrayS.length; j++){
                         if(arrayS[j].matches("[0-9]+") || arrayS[j].matches("[a-zA-Z]+")||arrayS[j].length()>1){
 
@@ -108,7 +110,10 @@ public class linker {
                                         }
                                         if(checkName && checkValue){
                                             if(symbolTable.checkIfExists(name) == -1){
+
                                                 Variable v = new Variable(name, value, modNum);
+                                                Variable b = new Variable(name, value - baseAddress, modNum);
+                                                variablesOfMod.add(b);
                                                 symbolTable.addVariable(v);
                                             }
                                             checkName = false;
@@ -146,6 +151,34 @@ public class linker {
                                 int length = potentialLine.split(" ").length;
                                 if(length==numOfElements+1){
 //                                    System.out.println(potentialLine);
+//                                    ArrayList<Variable> varsInMod = symbolTable.varsInMod(modNum);
+//                                    for(int r=0; r<varsInMod.size(); r++){
+//                                        System.out.println("Appearing Value: "+varsInMod.get(r).getValue());
+//                                        System.out.println("Size: "+numOfElements+" mod: "+modNum);
+//                                        if(varsInMod.get(r).getValue() >= numOfElements){
+//                                            varsInMod.get(r).setValue(0);
+//                                        }
+//                                    }
+//                                    System.out.println("NumofElements "+numOfElements);
+//                                    for(int hi=0; hi<keepTrackOfMods.size(); hi++){
+//                                        if(keepTrackOfMods.get(hi) == modNum){
+//                                            for(int f=0; f<symbolTable.sizeOfTable();f++){
+//
+//                                                if(valuesAtSymbols.get(f) >= numOfElements){
+////                                                    System.out.println("Value at symbol: "+valuesAtSymbols.get(f));
+//                                                    symbolTable.getVariable(f).setValue(symbolTable.getVariable(f).getValue() - valuesAtSymbols.get(f));
+//                                                }
+//                                            }
+//                                        }
+//                                    }
+                                    for(int hi=0; hi<variablesOfMod.size(); hi++){
+//                                        System.out.println(variablesOfMod.get(hi).getValue());
+                                        if(variablesOfMod.get(hi).getValue() >= numOfElements){
+                                            Variable go = symbolTable.findVariable(variablesOfMod.get(hi).getName());
+                                            go.setValue(go.getValue() - variablesOfMod.get(hi).getValue());
+                                        }
+                                    }
+                                    variablesOfMod.clear();
                                     programText = potentialLine.split(" ");
                                     int newLength = programText.length-1;
                                     String[] newProgramText = new String[newLength];
@@ -156,7 +189,7 @@ public class linker {
                                     def = true;
                                     index = 1;
                                     potentialLine = "";
-                                    Module m = new Module(baseAddress, newProgramText, modNum, sizeOfMachine);
+                                    Module m = new Module(baseAddress, newProgramText, modNum, sizeOfMachine, numOfElements);
                                     modules.addModule(m);
                                     baseAddress = baseAddress + numOfElements;
                                     programText = null;
@@ -214,6 +247,19 @@ public class linker {
                                     }
 //                                    System.out.println(potentialLine);
 //                                    System.out.println(symbolsDefined);
+//                                    String[] ArrayOfSymbolsDefined = symbolsDefined.split(" ");
+//                                    if(ArrayOfSymbolsDefined.length>1){
+//                                        for(int s=0; s<ArrayOfSymbolsDefined.length; s++){
+//                                            if(s%2==1){
+//                                                int val = Integer.parseInt(ArrayOfSymbolsDefined[s]);
+//                                                if(val >= modules.getModByModNum(modNum).getSizeOfModule()){
+//                                                    Variable vari = symbolTable.findVariable(ArrayOfSymbolsDefined[s-1]);
+//                                                    vari.setValue(0);
+////                                                    System.out.println("Error, value of def bigger than size of mod");
+//                                                }
+//                                            }
+//                                        }
+//                                    }
 
                                     symbolsDefined = "";
                                     def = false;

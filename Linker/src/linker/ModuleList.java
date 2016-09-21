@@ -60,6 +60,15 @@ public class ModuleList {
             modules.get(g).checkIfVarUsed();
         }
     }
+    public Module getModByModNum(int m){
+        Module mod = null;
+        for(int i=0; i<modules.size(); i++){
+            if(modules.get(i).getModNum() == m){
+                mod = modules.get(i);
+            }
+        }
+        return mod;
+    }
     @Override
     public String toString(){
         String string = "Memory Map\n";

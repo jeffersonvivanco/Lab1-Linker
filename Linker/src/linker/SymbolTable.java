@@ -37,6 +37,15 @@ public class SymbolTable {
         }
         return check;
     }
+    public ArrayList<Variable> varsInMod(int modNum){
+        ArrayList<Variable> array = new ArrayList<>();
+        for(int i=0; i<variables.size(); i++){
+            if(variables.get(i).getModNum() == modNum){
+                array.add(variables.get(i));
+            }
+        }
+        return array;
+    }
     public Variable getVariable(int x){
         return variables.get(x);
     }
