@@ -23,4 +23,4 @@ Steps to navigate to this folder(In terminal):
     please run the program again. The output is printed straight to the terminal. 
 
 I hope everything went well, if you cannot get this program to run, please contact me
-asap at jv1019@nyu.edu.
+asap at jv1019@nyu.edu. Enjoy!
